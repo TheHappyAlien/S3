@@ -7,12 +7,12 @@ interface FileColumnProps {
 
 export default function FileColumn({ files }: FileColumnProps) {
   return (
-    <div className="w-1/4 divide-y-2 divide-slate-500">
+    <div className="w-1/4">
       <div className="flex pb-2">
-        <p className="w-2/12 font-semibold text-gray-400">Id</p>
-        <p className="w-6/12 font-semibold text-gray-400">File name</p>
+        <p className="w-2/12 font-semibold text-gray-200">Id</p>
+        <p className="w-6/12 font-semibold text-grey-200">Nazwa</p>
       </div>
-      <div className="flex flex-col divide-y-2 divide-slate-500">
+      <div className="flex flex-col">
         {files.map((file) => (
           <FileRow key={file.id} file={file} />
         ))}

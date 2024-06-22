@@ -3,33 +3,23 @@ import FileDto from "../store/dto/File.dto";
 import DeleteIcon from "./icons/DeleteIcon";
 import DownloadIcon from "./icons/DownloadIcon";
 import EditIcon from "./icons/EditIcon";
+import { UseFileStore } from "../store/file-store";
 
 interface FileRowProps {
   file: FileDto;
 }
 
+
+
 export default function FileRow({ file }: FileRowProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [fileName, setFileName] = useState(file.name);
-
-  const downloadFile = async () => {
-    try {
-      const response = await fetch(file.url);
-      if (!response.ok) throw new Error('Network response was not ok.');
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = fileName || 'download';
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error('There was an error!', error);
-    }
-  };
   
+  const {
+    updateFileName,
+    deleteFile,
+    downloadFile,
+  } = UseFileStore();
 
   const handleFileNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFileName(event.target.value);
@@ -38,33 +28,34 @@ export default function FileRow({ file }: FileRowProps) {
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === "Enter") {
       setIsEditing(false);
-      // TODO: Add saving the new name to the server
+      updateFileName(file.id, fileName);
+    } else if (event.key === "Escape") {
+      setFileName(file.name);
+      setIsEditing(false);
     }
   };
 
-  const removeFile = () => {};
-
   return (
-    <div className="flex py-2">
-      <p className="w-2/12">{file.id}</p>
+    <div className="flex py-2 text-white">
+      <p className="w-1/6">{file.id}</p>
       {isEditing ? (
         <input
           type="text"
           value={fileName}
           onChange={handleFileNameChange}
           onKeyDown={handleKeyDown}
-          className="w-3/5"
+          className="w-1/3"
         />
       ) : (
-        <p className="w-3/5">{fileName}</p>
+        <p className="w-2/3">{fileName}</p>
       )}
       <div className="flex space-x-2">
         <a>
-        <DownloadIcon onClick={downloadFile} />
+        <DownloadIcon onClick={() => downloadFile(file.id)} />
         </a>
         
         <EditIcon onClick={() => setIsEditing(true)} />
-        <DeleteIcon onClick={removeFile} />
+        <DeleteIcon onClick={() => deleteFile(file.id)} />
       </div>
     </div>
   );

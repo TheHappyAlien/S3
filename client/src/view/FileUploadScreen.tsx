@@ -15,10 +15,9 @@ export default function FileUploadScreen() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center space-y-4">
-      <h1>File Upload App</h1>
-      {files === undefined ? (
-          <p>No files</p>
+    <div className="flex flex-col items-center">
+      {files === undefined || files.length === 0 ? (
+          <p>Brak plików</p>
         ) : (
           <FileColumn files={files}/>
         )
